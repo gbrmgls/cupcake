@@ -66,6 +66,8 @@ function App() {
     },
   ]);
 
+  const [filtro, setFiltro] = useState("");
+
   const [navegacao, setNavegacao] = useState("landing");
 
   const cadastrar = (email: string, senha: string, confirmarSenha: string) => {
@@ -199,24 +201,32 @@ function App() {
             <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
             <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
           </div>
-          <div className="flex gap-2 mt-3">
-            <Input type="text" placeholder="Cupcake..." />
-            <Button>Buscar</Button>
-          </div>
+          <Input
+            type="text"
+            placeholder="Pesquisar"
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          />
 
           <div className="grid grid-cols-3 gap-2">
-            {cupcakes.map((cupcake) => (
-              <div className="flex flex-col gap-2 bg-gray-200">
-                <img src="cupcake.png" />
-                <p className="text-2xl font-bold">{cupcake.nome}</p>
-                <p>Nota: {cupcake.nota}/5</p>
-                <p>{cupcake.descricao}</p>
-                <p>R${cupcake.preco}</p>
-                <Button onClick={() => addCarrinho(cupcake.id)}>
-                  Adicionar ao carrinho
-                </Button>
-              </div>
-            ))}
+            {cupcakes.map(
+              (cupcake) =>
+                (filtro == "" ||
+                  cupcake.nome
+                    .toLowerCase()
+                    .includes(filtro.toLowerCase())) && (
+                  <div className="flex flex-col gap-2 bg-gray-200">
+                    <img src="cupcake.png" />
+                    <p className="text-2xl font-bold">{cupcake.nome}</p>
+                    <p>Nota: {cupcake.nota}/5</p>
+                    <p>{cupcake.descricao}</p>
+                    <p>R${cupcake.preco}</p>
+                    <Button onClick={() => addCarrinho(cupcake.id)}>
+                      Adicionar ao carrinho
+                    </Button>
+                  </div>
+                )
+            )}
           </div>
         </div>
       )}
