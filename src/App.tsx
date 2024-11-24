@@ -29,20 +29,7 @@ function App() {
     },
   ]);
 
-  const [carrinho, setCarrinho] = useState([
-    {
-      id: 1,
-      quantidade: 2,
-    },
-    {
-      id: 2,
-      quantidade: 1,
-    },
-    {
-      id: 3,
-      quantidade: 1,
-    },
-  ]);
+  const [carrinho, setCarrinho] = useState<any[]>([]);
 
   const [login, setLogin] = useState({
     logado: false,
@@ -51,7 +38,12 @@ function App() {
     confirmarSenha: "",
   });
 
-  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<any[]>([
+    {
+      email: "teste",
+      senha: "teste",
+    },
+  ]);
 
   const [pedidos, setPedidos] = useState([
     {
@@ -97,7 +89,38 @@ function App() {
 
   const deslogar = () => {
     setLogin({ logado: false, email: "", senha: "", confirmarSenha: "" });
+    setCarrinho([]);
     setNavegacao("landing");
+  };
+
+  const addCarrinho = (id: number) => {
+    if (!carrinho.find((c) => c.id == id)) {
+      setCarrinho([...carrinho, { id, quantidade: 1 }]);
+    }
+  };
+
+  const incrCarrinho = (id: number) => {
+    setCarrinho(
+      carrinho.map((c) =>
+        c.id == id ? { ...c, quantidade: c.quantidade + 1 } : c
+      )
+    );
+  };
+
+  const decrCarrinho = (id: number) => {
+    if (carrinho.find((c) => c.id == id).quantidade == 1) {
+      setCarrinho(carrinho.filter((c) => c.id != id));
+    } else {
+      setCarrinho(
+        carrinho.map((c) =>
+          c.id == id ? { ...c, quantidade: c.quantidade - 1 } : c
+        )
+      );
+    }
+  };
+
+  const removeCarrinho = (id: number) => {
+    setCarrinho(carrinho.filter((c) => c.id != id));
   };
 
   return (
@@ -189,7 +212,9 @@ function App() {
                 <p>Nota: {cupcake.nota}/5</p>
                 <p>{cupcake.descricao}</p>
                 <p>R${cupcake.preco}</p>
-                <Button>Adicionar ao carrinho</Button>
+                <Button onClick={() => addCarrinho(cupcake.id)}>
+                  Adicionar ao carrinho
+                </Button>
               </div>
             ))}
           </div>
@@ -223,10 +248,11 @@ function App() {
                 R${cupcakes.find((cupcake) => cupcake.id === item.id)?.preco}
               </p>
               <div className="flex gap-2 items-center justify-center">
-                <Button>-</Button>
+                <Button onClick={() => decrCarrinho(item.id)}>-</Button>
                 <p>{item.quantidade}</p>
-                <Button>+</Button>
+                <Button onClick={() => incrCarrinho(item.id)}>+</Button>
               </div>
+              <Button onClick={() => removeCarrinho(item.id)}>Remover</Button>
             </div>
           ))}
 
