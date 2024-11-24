@@ -199,7 +199,9 @@ function App() {
             <h3>Usuário logado: {login.email}</h3>
             <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
-            <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
+            {carrinho.length > 0 && (
+              <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
+            )}
           </div>
           <Input
             type="text"
