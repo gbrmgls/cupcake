@@ -8,23 +8,23 @@ function App() {
   const [cupcakes, setCupcakes] = useState([
     {
       id: 1,
+      imagem: "cupcake1.png",
       nome: "Cupcake 1",
       preco: 1,
-      nota: 5,
       descricao: "Um delicioso cupcake!",
     },
     {
       id: 2,
+      imagem: "cupcake2.png",
       nome: "Cupcake 2",
       preco: 2,
-      nota: 4,
       descricao: "Um ótimo cupcake!",
     },
     {
       id: 3,
+      imagem: "cupcake3.png",
       nome: "Cupcake 3",
       preco: 3,
-      nota: 3,
       descricao: "Um lindo cupcake!",
     },
   ]);
@@ -198,7 +198,9 @@ function App() {
           <div className="flex gap-2 mt-3 items-center justify-center">
             <h3>Usuário logado: {login.email}</h3>
             <Button onClick={() => deslogar()}>Sair</Button>
-            <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
+            {pedidos.filter((p) => p.email == login.email).length > 0 && (
+              <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
+            )}
             {carrinho.length > 0 && (
               <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
             )}
@@ -218,9 +220,8 @@ function App() {
                     .toLowerCase()
                     .includes(filtro.toLowerCase())) && (
                   <div className="flex flex-col gap-2 bg-gray-200">
-                    <img src="cupcake.png" />
+                    <img src={cupcake.imagem} />
                     <p className="text-2xl font-bold">{cupcake.nome}</p>
-                    <p>Nota: {cupcake.nota}/5</p>
                     <p>{cupcake.descricao}</p>
                     <p>R${cupcake.preco}</p>
                     <Button onClick={() => addCarrinho(cupcake.id)}>
@@ -245,13 +246,11 @@ function App() {
 
           {carrinho.map((item) => (
             <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" />
+              <img
+                src={cupcakes.find((cupcake) => cupcake.id === item.id)?.imagem}
+              />
               <p className="text-2xl font-bold">
                 {cupcakes.find((cupcake) => cupcake.id === item.id)?.nome}
-              </p>
-              <p>
-                Nota: {cupcakes.find((cupcake) => cupcake.id === item.id)?.nota}
-                /5
               </p>
               <p>
                 {cupcakes.find((cupcake) => cupcake.id === item.id)?.descricao}
