@@ -48,9 +48,10 @@ function App() {
     logado: false,
     email: "",
     senha: "",
+    confirmarSenha: "",
   });
 
-  const [usuarios, setUsuarios] = useState([]);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
 
   const [pedidos, setPedidos] = useState([
     {
@@ -75,13 +76,27 @@ function App() {
 
   const [navegacao, setNavegacao] = useState("landing");
 
+  const cadastrar = (email: string, senha: string, confirmarSenha: string) => {
+    if (senha == confirmarSenha && !usuarios.find((u) => u.email == email)) {
+      setNavegacao("login");
+      setUsuarios([...usuarios, { email, senha }]);
+    }
+  };
+
   const logar = (email: string, senha: string) => {
-    setLogin({ logado: true, email, senha: "" });
-    setNavegacao("catalogo");
+    if (
+      usuarios.find((u) => u.email == email) &&
+      usuarios.find((u) => u.senha == senha)
+    ) {
+      setLogin({ logado: true, email, senha: "", confirmarSenha: "" });
+      setNavegacao("catalogo");
+    } else {
+      alert("Login incorreto.");
+    }
   };
 
   const deslogar = () => {
-    setLogin({ logado: false, email: "", senha: "" });
+    setLogin({ logado: false, email: "", senha: "", confirmarSenha: "" });
     setNavegacao("landing");
   };
 
@@ -114,6 +129,7 @@ function App() {
           <Button onClick={() => logar(login.email, login.senha)}>
             Entrar
           </Button>
+          <Button onClick={() => setNavegacao("landing")}>Voltar</Button>
         </div>
       )}
 
@@ -121,11 +137,32 @@ function App() {
       {navegacao === "cadastro" && (
         <div className="flex flex-col gap-2 mt-3">
           <h1>Cadastro</h1>
-          <Input type="text" placeholder="Seu email" />
-          <Input type="password" placeholder="Crie sua senha" />
-          <Input type="password" placeholder="Confirme sua senha" />
+          <Input
+            type="text"
+            placeholder="Seu email"
+            onChange={(e) => setLogin({ ...login, email: e.target.value })}
+          />
+          <Input
+            type="password"
+            placeholder="Crie sua senha"
+            onChange={(e) => setLogin({ ...login, senha: e.target.value })}
+          />
+          <Input
+            type="password"
+            placeholder="Confirme sua senha"
+            onChange={(e) =>
+              setLogin({ ...login, confirmarSenha: e.target.value })
+            }
+          />
 
-          <Button onClick={() => setNavegacao("login")}>Enviar</Button>
+          <Button
+            onClick={() =>
+              cadastrar(login.email, login.senha, login.confirmarSenha)
+            }
+          >
+            Enviar
+          </Button>
+          <Button onClick={() => setNavegacao("landing")}>Voltar</Button>
         </div>
       )}
 
