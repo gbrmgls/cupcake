@@ -47,6 +47,7 @@ function App() {
   const [login, setLogin] = useState({
     logado: false,
     email: "",
+    senha: "",
   });
 
   const [usuarios, setUsuarios] = useState([]);
@@ -74,6 +75,16 @@ function App() {
 
   const [navegacao, setNavegacao] = useState("landing");
 
+  const logar = (email: string, senha: string) => {
+    setLogin({ logado: true, email, senha: "" });
+    setNavegacao("catalogo");
+  };
+
+  const deslogar = () => {
+    setLogin({ logado: false, email: "", senha: "" });
+    setNavegacao("landing");
+  };
+
   return (
     <>
       {/* LANDING PAGE */}
@@ -89,10 +100,20 @@ function App() {
       {navegacao === "login" && (
         <div className="flex flex-col gap-2 mt-3">
           <h1>Login</h1>
-          <Input type="text" placeholder="Email" />
-          <Input type="password" placeholder="Senha" />
+          <Input
+            type="text"
+            placeholder="Email"
+            onChange={(e) => setLogin({ ...login, email: e.target.value })}
+          />
+          <Input
+            type="password"
+            placeholder="Senha"
+            onChange={(e) => setLogin({ ...login, senha: e.target.value })}
+          />
 
-          <Button onClick={() => setNavegacao("catalogo")}>Entrar</Button>
+          <Button onClick={() => logar(login.email, login.senha)}>
+            Entrar
+          </Button>
         </div>
       )}
 
@@ -113,8 +134,8 @@ function App() {
         <div className="flex flex-col gap-2 mt-3">
           <h1>Catálogo</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
-            <h3>Usuário logado: teste@gmail.com</h3>
-            <Button onClick={() => setNavegacao("landing")}>Sair</Button>
+            <h3>Usuário logado: {login.email}</h3>
+            <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
             <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
           </div>
@@ -143,8 +164,8 @@ function App() {
         <div className="flex flex-col gap-2 mt-3">
           <h1>Carrinho</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
-            <h3>Usuário logado: teste@gmail.com</h3>
-            <Button onClick={() => setNavegacao("landing")}>Sair</Button>
+            <h3>Usuário logado: {login.email}</h3>
+            <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
 
@@ -201,7 +222,7 @@ function App() {
           <h1>Pedidos</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
             <h3>Usuário logado: </h3>
-            <Button onClick={() => setNavegacao("landing")}>Sair</Button>
+            <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
         </div>
@@ -213,7 +234,7 @@ function App() {
           <h1>Compra finalizada</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
             <h3>Usuário logado: </h3>
-            <Button onClick={() => setNavegacao("landing")}>Sair</Button>
+            <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
         </div>
