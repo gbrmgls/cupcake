@@ -31,20 +31,16 @@ function App() {
 
   const [carrinho, setCarrinho] = useState([
     {
-      produtos: [
-        {
-          id: 1,
-          quantidade: 2,
-        },
-        {
-          id: 2,
-          quantidade: 1,
-        },
-        {
-          id: 3,
-          quantidade: 1,
-        },
-      ],
+      id: 1,
+      quantidade: 2,
+    },
+    {
+      id: 2,
+      quantidade: 1,
+    },
+    {
+      id: 3,
+      quantidade: 1,
     },
   ]);
 
@@ -128,41 +124,16 @@ function App() {
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <Button>Adicionar ao carrinho</Button>
-            </div>
-
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <Button>Adicionar ao carrinho</Button>
-            </div>
-
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <Button>Adicionar ao carrinho</Button>
-            </div>
-
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <Button>Adicionar ao carrinho</Button>
-            </div>
+            {cupcakes.map((cupcake) => (
+              <div className="flex flex-col gap-2 bg-gray-200">
+                <img src="cupcake.png" />
+                <p className="text-2xl font-bold">{cupcake.nome}</p>
+                <p>Nota: {cupcake.nota}/5</p>
+                <p>{cupcake.descricao}</p>
+                <p>R${cupcake.preco}</p>
+                <Button>Adicionar ao carrinho</Button>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -177,63 +148,49 @@ function App() {
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          {carrinho.map((item) => (
             <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
+              <img src="cupcake.png" />
+              <p className="text-2xl font-bold">
+                {cupcakes.find((cupcake) => cupcake.id === item.id)?.nome}
+              </p>
+              <p>
+                Nota: {cupcakes.find((cupcake) => cupcake.id === item.id)?.nota}
+                /5
+              </p>
+              <p>
+                {cupcakes.find((cupcake) => cupcake.id === item.id)?.descricao}
+              </p>
+              <p>
+                R${cupcakes.find((cupcake) => cupcake.id === item.id)?.preco}
+              </p>
               <div className="flex gap-2 items-center justify-center">
                 <Button>-</Button>
-                <p>2</p>
+                <p>{item.quantidade}</p>
                 <Button>+</Button>
               </div>
             </div>
+          ))}
 
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <div className="flex gap-2 items-center justify-center">
-                <Button>-</Button>
-                <p>2</p>
-                <Button>+</Button>
-              </div>
-            </div>
+          <Input type="text" placeholder="Nome"></Input>
+          <Input type="text" placeholder="Endereço"></Input>
+          <Input type="text" placeholder="Cartão de crédito"></Input>
+          <Input type="text" placeholder="Cupom (Opcional)"></Input>
 
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <div className="flex gap-2 items-center justify-center">
-                <Button>-</Button>
-                <p>2</p>
-                <Button>+</Button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 bg-gray-200">
-              <img src="cupcake.png" alt="Cupcake 1" />
-              <p className="text-2xl font-bold">Cupcake 1</p>
-              <p>Nota: 4.5/5</p>
-              <p>Um delicioso cupcake!</p>
-              <p>R$1</p>
-              <div className="flex gap-2 items-center justify-center">
-                <Button>-</Button>
-                <p>2</p>
-                <Button>+</Button>
-              </div>
-            </div>
-          </div>
-          <p>Subtotal: R$10</p>
-          <p>Frete: R$10</p>
-          <p>Total: R$30</p>
-          <Button onClick={() => setNavegacao("compra")}>Comprar</Button>
+          <p>
+            Total: R$
+            {carrinho.reduce(
+              (total, item) =>
+                total +
+                item.quantidade *
+                  (cupcakes.find((cupcake) => cupcake.id === item.id)?.preco ??
+                    0),
+              0
+            )}
+          </p>
+          <Button onClick={() => setNavegacao("compra-finalizada")}>
+            Comprar
+          </Button>
           <Button onClick={() => setNavegacao("catalogo")}>Cancelar</Button>
         </div>
       )}
@@ -250,8 +207,8 @@ function App() {
         </div>
       )}
 
-      {/* PEDIDOS */}
-      {navegacao === "compra" && (
+      {/* COMPRA FINALIZADA */}
+      {navegacao === "compra-finalizada" && (
         <div className="flex flex-col gap-2 mt-3">
           <h1>Compra finalizada</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
