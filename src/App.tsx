@@ -7,8 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 import "./App.css";
 
 const supabase = createClient(
-  import.meta.env.VITE_DATABASE_URL,
-  import.meta.env.VITE_DATABASE_KEY
+  import.meta.env.DATABASE_URL,
+  import.meta.env.DATABASE_KEY
 );
 
 function App() {
