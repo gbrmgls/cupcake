@@ -156,11 +156,13 @@ function App() {
     alert(
       "Compra realizada com sucesso! Você pode acessar os detalhes na aba 'Pedidos'."
     );
+
+    const id = pedidos.length + 1;
     setPedidos([
       ...pedidos,
       {
         ...carrinho,
-        id: pedidos.length + 1,
+        id: id,
         usuario: login.email,
         preco: carrinho.produtos.reduce(
           (c: any, a: any) =>
@@ -171,6 +173,26 @@ function App() {
         ),
       },
     ]);
+
+    supabase
+      .from("pedidos")
+      .insert({
+        ...carrinho,
+        id: id,
+        usuario: login.email,
+        preco: carrinho.produtos.reduce(
+          (c: any, a: any) =>
+            c +
+            a.quantidade *
+              (cupcakes.find((cupcake) => cupcake.id === a.id)?.preco ?? 0),
+          0
+        ),
+      })
+      .select()
+      .then((res) => {
+        console.log(res);
+      });
+
     setCarrinho({ produtos: [] });
     setNavegacao("catalogo");
   };
