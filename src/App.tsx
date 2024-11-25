@@ -39,12 +39,7 @@ function App() {
     confirmarSenha: "",
   });
 
-  const [usuarios, setUsuarios] = useState<any[]>([
-    {
-      email: "teste",
-      senha: "teste",
-    },
-  ]);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
 
   const [pedidos, setPedidos] = useState<any[]>([]);
 
@@ -56,6 +51,8 @@ function App() {
     if (senha == confirmarSenha && !usuarios.find((u) => u.email == email)) {
       setNavegacao("login");
       setUsuarios([...usuarios, { email, senha }]);
+    } else {
+      alert("Senhas diferentes ou e-mail ja cadastrado.");
     }
   };
 
@@ -355,30 +352,35 @@ function App() {
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
           <div>
-            {pedidos.map((pedido: any) => (
-              <div className="flex flex-col gap-2 bg-gray-200 mt-3">
-                <p>Produtos:</p>
-                {pedido.produtos.map((item: any) => (
-                  <div className="flex gap-2 items-center justify-center bg-gray-300">
-                    <p className="text-2xl font-bold">
-                      {cupcakes.find((cupcake) => cupcake.id === item.id)?.nome}
-                    </p>
-                    <p>
-                      R$
-                      {
-                        cupcakes.find((cupcake) => cupcake.id === item.id)
-                          ?.preco
-                      }
-                    </p>
-                    <p>Quantidade: {item.quantidade}</p>
-                  </div>
-                ))}
-                <p>Usuário: {pedido.usuario}</p>
-                <p>Endereço: {pedido.endereco}</p>
-                <p>Cartão de crédito: {pedido.cartao}</p>
-                <p>Preço: R${pedido.preco}</p>
-              </div>
-            ))}
+            {pedidos
+              .filter((p) => p.usuario == login.email)
+              .map((pedido: any) => (
+                <div className="flex flex-col gap-2 bg-gray-200 mt-3">
+                  <p>Produtos:</p>
+                  {pedido.produtos.map((item: any) => (
+                    <div className="flex gap-2 items-center justify-center bg-gray-300">
+                      <p className="text-2xl font-bold">
+                        {
+                          cupcakes.find((cupcake) => cupcake.id === item.id)
+                            ?.nome
+                        }
+                      </p>
+                      <p>
+                        R$
+                        {
+                          cupcakes.find((cupcake) => cupcake.id === item.id)
+                            ?.preco
+                        }
+                      </p>
+                      <p>Quantidade: {item.quantidade}</p>
+                    </div>
+                  ))}
+                  <p>Usuário: {pedido.usuario}</p>
+                  <p>Endereço: {pedido.endereco}</p>
+                  <p>Cartão de crédito: {pedido.cartao}</p>
+                  <p>Preço: R${pedido.preco}</p>
+                </div>
+              ))}
           </div>
         </div>
       )}
