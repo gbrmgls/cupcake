@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { createClient } from "@supabase/supabase-js";
 
 import "./App.css";
-
+console.log(import.meta.env);
 const supabase = createClient(
-  import.meta.env.DATABASE_URL,
-  import.meta.env.DATABASE_KEY
+  import.meta.env.VITE_DATABASE_URL,
+  import.meta.env.VITE_DATABASE_KEY
 );
 
 function App() {
