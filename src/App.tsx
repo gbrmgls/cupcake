@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +30,7 @@ function App() {
     },
   ]);
 
-  const [carrinho, setCarrinho] = useState<any[]>([]);
+  const [carrinho, setCarrinho] = useState<any>({});
 
   const [login, setLogin] = useState({
     logado: false,
@@ -45,26 +46,7 @@ function App() {
     },
   ]);
 
-  const [pedidos, setPedidos] = useState([
-    {
-      usuario: "teste@gmail.com",
-      id: 1,
-      produtos: [
-        {
-          id: 1,
-          quantidade: 2,
-        },
-        {
-          id: 2,
-          quantidade: 1,
-        },
-        {
-          id: 3,
-          quantidade: 1,
-        },
-      ],
-    },
-  ]);
+  const [pedidos, setPedidos] = useState<any[]>([]);
 
   const [filtro, setFiltro] = useState("");
 
@@ -96,33 +78,90 @@ function App() {
   };
 
   const addCarrinho = (id: number) => {
-    if (!carrinho.find((c) => c.id == id)) {
-      setCarrinho([...carrinho, { id, quantidade: 1 }]);
+    if (!carrinho.produtos) {
+      setCarrinho({
+        ...carrinho,
+        produtos: [{ id, quantidade: 1 }],
+      });
+    } else if (!carrinho.produtos.find((c: any) => c.id == id)) {
+      setCarrinho({
+        ...carrinho,
+        produtos: [...carrinho.produtos, { id, quantidade: 1 }],
+      });
     }
   };
 
   const incrCarrinho = (id: number) => {
-    setCarrinho(
-      carrinho.map((c) =>
+    console.log(id);
+    setCarrinho({
+      ...carrinho,
+      produtos: carrinho.produtos.map((c: any) =>
+        c.id == id ? { ...c, quantidade: c.quantidade + 1 } : c
+      ),
+    });
+    console.log(
+      carrinho.produtos.map((c: any) =>
         c.id == id ? { ...c, quantidade: c.quantidade + 1 } : c
       )
     );
   };
 
   const decrCarrinho = (id: number) => {
-    if (carrinho.find((c) => c.id == id).quantidade == 1) {
-      setCarrinho(carrinho.filter((c) => c.id != id));
+    if (carrinho.produtos.find((c: any) => c.id == id).quantidade == 1) {
+      setCarrinho({
+        ...carrinho,
+        produtos: carrinho.produtos.filter((c: any) => c.id != id),
+      });
     } else {
-      setCarrinho(
-        carrinho.map((c) =>
+      setCarrinho({
+        ...carrinho,
+        produtos: carrinho.produtos.map((c: any) =>
           c.id == id ? { ...c, quantidade: c.quantidade - 1 } : c
-        )
-      );
+        ),
+      });
+    }
+
+    if (
+      carrinho.produtos.reduce((c: any, a: any) => c + a.quantidade, 0) == 1
+    ) {
+      setNavegacao("catalogo");
     }
   };
 
   const removeCarrinho = (id: number) => {
-    setCarrinho(carrinho.filter((c) => c.id != id));
+    setCarrinho({
+      ...carrinho,
+      produtos: carrinho.produtos.filter((c: any) => c.id != id),
+    });
+
+    if (
+      carrinho.produtos.reduce((c: any, a: any) => c + a.quantidade, 0) == 1
+    ) {
+      setNavegacao("catalogo");
+    }
+  };
+
+  const confirmarCompra = () => {
+    alert(
+      "Compra realizada com sucesso! Você pode acessar os detalhes na aba 'Pedidos'."
+    );
+    setPedidos([
+      ...pedidos,
+      {
+        ...carrinho,
+        id: pedidos.length + 1,
+        usuario: login.email,
+        preco: carrinho.produtos.reduce(
+          (c: any, a: any) =>
+            c +
+            a.quantidade *
+              (cupcakes.find((cupcake) => cupcake.id === a.id)?.preco ?? 0),
+          0
+        ),
+      },
+    ]);
+    setCarrinho({ produtos: [] });
+    setNavegacao("catalogo");
   };
 
   return (
@@ -198,10 +237,10 @@ function App() {
           <div className="flex gap-2 mt-3 items-center justify-center">
             <h3>Usuário logado: {login.email}</h3>
             <Button onClick={() => deslogar()}>Sair</Button>
-            {pedidos.filter((p) => p.email == login.email).length > 0 && (
+            {pedidos.filter((p) => p.usuario == login.email).length > 0 && (
               <Button onClick={() => setNavegacao("pedidos")}>Pedidos</Button>
             )}
-            {carrinho.length > 0 && (
+            {carrinho.produtos?.length > 0 && (
               <Button onClick={() => setNavegacao("carrinho")}>Carrinho</Button>
             )}
           </div>
@@ -244,7 +283,7 @@ function App() {
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
 
-          {carrinho.map((item) => (
+          {carrinho.produtos.map((item: any) => (
             <div className="flex flex-col gap-2 bg-gray-200">
               <img
                 src={cupcakes.find((cupcake) => cupcake.id === item.id)?.imagem}
@@ -267,25 +306,41 @@ function App() {
             </div>
           ))}
 
-          <Input type="text" placeholder="Nome"></Input>
-          <Input type="text" placeholder="Endereço"></Input>
-          <Input type="text" placeholder="Cartão de crédito"></Input>
-          <Input type="text" placeholder="Cupom (Opcional)"></Input>
+          <Input
+            type="text"
+            placeholder="Nome"
+            onChange={(e) => setCarrinho({ ...carrinho, nome: e.target.value })}
+            value={carrinho.nome}
+          ></Input>
+          <Input
+            type="text"
+            placeholder="Endereço"
+            onChange={(e) =>
+              setCarrinho({ ...carrinho, endereco: e.target.value })
+            }
+            value={carrinho.endereco}
+          ></Input>
+          <Input
+            type="text"
+            placeholder="Cartão de crédito"
+            onChange={(e) =>
+              setCarrinho({ ...carrinho, cartao: e.target.value })
+            }
+            value={carrinho.cartao}
+          ></Input>
 
           <p>
-            Total: R$
-            {carrinho.reduce(
-              (total, item) =>
-                total +
-                item.quantidade *
-                  (cupcakes.find((cupcake) => cupcake.id === item.id)?.preco ??
-                    0),
+            Preço: R$
+            {carrinho.produtos.reduce(
+              (c: any, a: any) =>
+                c +
+                a.quantidade *
+                  (cupcakes.find((cupcake) => cupcake.id === a.id)?.preco ?? 0),
               0
             )}
           </p>
-          <Button onClick={() => setNavegacao("compra-finalizada")}>
-            Comprar
-          </Button>
+
+          <Button onClick={() => setNavegacao("confirmar")}>Comprar</Button>
           <Button onClick={() => setNavegacao("catalogo")}>Cancelar</Button>
         </div>
       )}
@@ -299,18 +354,72 @@ function App() {
             <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
+          <div>
+            {pedidos.map((pedido: any) => (
+              <div className="flex flex-col gap-2 bg-gray-200 mt-3">
+                <p>Produtos:</p>
+                {pedido.produtos.map((item: any) => (
+                  <div className="flex gap-2 items-center justify-center bg-gray-300">
+                    <p className="text-2xl font-bold">
+                      {cupcakes.find((cupcake) => cupcake.id === item.id)?.nome}
+                    </p>
+                    <p>
+                      R$
+                      {
+                        cupcakes.find((cupcake) => cupcake.id === item.id)
+                          ?.preco
+                      }
+                    </p>
+                    <p>Quantidade: {item.quantidade}</p>
+                  </div>
+                ))}
+                <p>Usuário: {pedido.usuario}</p>
+                <p>Endereço: {pedido.endereco}</p>
+                <p>Cartão de crédito: {pedido.cartao}</p>
+                <p>Preço: R${pedido.preco}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* COMPRA FINALIZADA */}
-      {navegacao === "compra-finalizada" && (
+      {/* FINALIZAR COMPRA */}
+      {navegacao === "confirmar" && (
         <div className="flex flex-col gap-2 mt-3">
-          <h1>Compra finalizada</h1>
+          <h1>Confirmar compra?</h1>
           <div className="flex gap-2 mt-3 items-center justify-center">
             <h3>Usuário logado: </h3>
             <Button onClick={() => deslogar()}>Sair</Button>
             <Button onClick={() => setNavegacao("catalogo")}>Voltar</Button>
           </div>
+
+          {carrinho.produtos.map((item: any) => (
+            <div className="flex gap-2 items-center justify-center">
+              <p className="text-2xl font-bold">
+                {cupcakes.find((cupcake) => cupcake.id === item.id)?.nome}
+              </p>
+
+              <p>
+                R${cupcakes.find((cupcake) => cupcake.id === item.id)?.preco}
+              </p>
+              <p>Quantidade: {item.quantidade}</p>
+            </div>
+          ))}
+          <p>
+            Preço: R$
+            {carrinho.produtos.reduce(
+              (c: any, a: any) =>
+                c +
+                a.quantidade *
+                  (cupcakes.find((cupcake) => cupcake.id === a.id)?.preco ?? 0),
+              0
+            )}
+          </p>
+          <p>Nome: {carrinho.nome}</p>
+          <p>Endereço: {carrinho.endereco}</p>
+          <p>Cartao: {carrinho.cartao}</p>
+          <Button onClick={() => confirmarCompra()}>Confirmar</Button>
+          <Button onClick={() => setNavegacao("carrinho")}>Cancelar</Button>
         </div>
       )}
     </>
