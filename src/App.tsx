@@ -1,34 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from "@supabase/supabase-js";
 
 import "./App.css";
 
+const supabase = createClient(
+  import.meta.env.VITE_DATABASE_URL,
+  import.meta.env.VITE_DATABASE_KEY
+);
+
 function App() {
-  const [cupcakes] = useState([
-    {
-      id: 1,
-      imagem: "cupcake1.png",
-      nome: "Cupcake 1",
-      preco: 1,
-      descricao: "Um delicioso cupcake!",
-    },
-    {
-      id: 2,
-      imagem: "cupcake2.png",
-      nome: "Cupcake 2",
-      preco: 2,
-      descricao: "Um ótimo cupcake!",
-    },
-    {
-      id: 3,
-      imagem: "cupcake3.png",
-      nome: "Cupcake 3",
-      preco: 3,
-      descricao: "Um lindo cupcake!",
-    },
-  ]);
+  useEffect(() => {
+    supabase
+      .from("cupcakes")
+      .select("*")
+      .then((res) => {
+        setCupcakes(res.data ?? []);
+      });
+
+    supabase
+      .from("usuarios")
+      .select("*")
+      .then((res) => {
+        setUsuarios(res.data ?? []);
+      });
+
+    supabase
+      .from("pedidos")
+      .select("*")
+      .then((res) => {
+        setPedidos(res.data ?? []);
+      });
+  }, []);
+
+  const [cupcakes, setCupcakes] = useState<any[]>([]);
 
   const [carrinho, setCarrinho] = useState<any>({});
 
@@ -49,8 +56,15 @@ function App() {
 
   const cadastrar = (email: string, senha: string, confirmarSenha: string) => {
     if (senha == confirmarSenha && !usuarios.find((u) => u.email == email)) {
+      supabase
+        .from("usuarios")
+        .insert({ email, senha })
+        .select()
+        .then((res) => {
+          console.log(res);
+        });
+      setUsuarios([...usuarios, { id: usuarios.length + 1, email, senha }]);
       setNavegacao("login");
-      setUsuarios([...usuarios, { email, senha }]);
     } else {
       alert("Senhas diferentes ou e-mail ja cadastrado.");
     }
