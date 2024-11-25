@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import "./App.css";
 
 function App() {
-  const [cupcakes, setCupcakes] = useState([
+  const [cupcakes] = useState([
     {
       id: 1,
       imagem: "cupcake1.png",
